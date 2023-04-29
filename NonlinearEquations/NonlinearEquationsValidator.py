@@ -35,7 +35,7 @@ class NonlinearEquationsValidator:
 
     @staticmethod
     def validateEquationNumber():
-        equation_number = NonlinearEquationsValidator.validateNumber(input())
+        equation_number = int(NonlinearEquationsValidator.validateNumber(input()))
         if 0 < equation_number <= AMOUNT_OF_EQUATIONS:
             return equation_number
         else:
@@ -43,7 +43,7 @@ class NonlinearEquationsValidator:
 
     @staticmethod
     def validateEquationMethod():
-        equation_method = NonlinearEquationsValidator.validateNumber(input())
+        equation_method = int(NonlinearEquationsValidator.validateNumber(input()))
         if 0 < equation_method <= AMOUNT_OF_METHODS:
             return equation_method
         else:

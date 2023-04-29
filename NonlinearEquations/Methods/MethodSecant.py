@@ -1,19 +1,30 @@
 from NonlinearEquations.NonlinearEquationsSolver import NonlinearEquationsSolver
-from Exceptions.IncorrectValueException import IncorrectValueException
-import numexpr as ne
+from NonlinearEquations.Equations import EQUATIONS
+from NonlinearEquations.Equations import *
 
 AMOUNT_OF_COLUMNS_SECANT = 6
 
 
 class MethodSecant(NonlinearEquationsSolver):
     # Метод секущих
-    def methodSecant(self, equatation: str):
+    def methodSecant(self, number_of_equatation: int):
         a = self.getLeftBorder()
         b = self.getRightBorder()
         eps = self.getEpsilon()
         print('\t\t\tМетод секущих')
-        print(f'1. Начальное приближение x0={a}')
-        print(f'2. Приближение x1={b}')
+        if checkConvergenceCondition(a, b, number_of_equatation):
+            print('Достаточное условие сходимости выполянется. Вычисляем начальные приближения x0 и x1.')
+            if self.calculateStart(a, number_of_equatation) > 0:
+                b = a - a * 0.25
+            elif self.calculateStart(b, number_of_equatation) > 0:
+                a = b
+                b = a + a * 0.25
+        else:
+            print(
+                'Достаточное условие сходимости не выполнилось. На интервале или нет корней, или существует несколько.')
+            return
+        print(f'1. Значение x0 ={a}')
+        print(f'2. Значение x1 ={b}')
         print(f'3. Точность epsilon={eps}')
         maxIterationNumber = self.calculateMaxIteration(eps)
         iterations = [[0.0 for x in range(AMOUNT_OF_COLUMNS_SECANT)]
@@ -23,21 +34,21 @@ class MethodSecant(NonlinearEquationsSolver):
             iterations[i][0] = count_of_iterations
             iterations[i][1] = a
             iterations[i][2] = b
-            iterations[i][3] = b - (b - a) / \
-                               (float(ne.evaluate(equatation, local_dict={'x': b})) - float(
-                                   ne.evaluate(equatation, local_dict={'x': a}))) * float(
-                ne.evaluate(equatation, local_dict={'x': b}))
-            iterations[i][4] = float(ne.evaluate(equatation, local_dict={'x': iterations[i][3]}))
+            iterations[i][3] = b - (b - a) / (calculateFunctionValue(b, number_of_equatation) -
+                                              calculateFunctionValue(a, number_of_equatation)) * calculateFunctionValue(
+                b, number_of_equatation)
+            iterations[i][4] = calculateFunctionValue(iterations[i][3], number_of_equatation)
             iterations[i][5] = abs(iterations[i][3] - iterations[i][2])
             count_of_iterations += 1
             if iterations[i][5] <= eps:
                 break
             a, b = iterations[i][2], iterations[i][3]
         self.printTableForMethodSecant(iterations, count_of_iterations)
-        print(f'\tНайденный корень уравнения:{iterations[count_of_iterations - 1][3]}\n'
-              f'\tЗначение функции в корне:{iterations[count_of_iterations - 1][4]}\n'
-              f'\tЧисло итераций: {count_of_iterations}')
-        return iterations[count_of_iterations - 1][3]
+        return iterations[count_of_iterations - 1][3], iterations[count_of_iterations - 1][4], count_of_iterations
+
+    def calculateStart(self, x, number_of_equation):
+        return calculateFunctionValue(x, number_of_equation) \
+            * calculateDerivativeSecondValue(x, number_of_equation)
 
     def printTableForMethodSecant(self, table, count_of_iterations):
         print('№ итерации| x(i-1) | xi | x(i+1) | f(x(i+1)) | |x(i+1) - xi| |')

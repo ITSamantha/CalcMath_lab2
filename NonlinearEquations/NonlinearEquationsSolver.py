@@ -1,7 +1,7 @@
-from Exceptions.IncorrectValueException import IncorrectValueException
 from NonlinearEquationsValidator import NonlinearEquationsValidator
 
-# Методы половинного деления, секущих, простых итераций
+
+# Класс для хранения данных для вычислений
 class NonlinearEquationsSolver:
 
     def __init__(self, epsilon, left_border=None, right_border=None, x0=None):
@@ -28,3 +28,5 @@ class NonlinearEquationsSolver:
 
     def calculateMaxIteration(self, eps):
         return int(100 / eps) if eps < 1 else int(100 * eps)
+
+

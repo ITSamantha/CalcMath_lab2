@@ -1,12 +1,14 @@
 from Exceptions.IncorrectValueException import IncorrectValueException
 from NonlinearEquations.NonlinearEquationsSolver import NonlinearEquationsSolver
+from NonlinearEquations.Equations import *
 import numexpr as ne
+
 AMOUNT_OF_COLUMNS_HALF_DIVISION = 8
 
 
 class MethodHalfDivision(NonlinearEquationsSolver):
     # Метод половинного деления
-    def methodHalfDivision(self, equatation: str):
+    def methodHalfDivision(self, number_of_equation):
         a = self.getLeftBorder()
         b = self.getRightBorder()
         eps = self.getEpsilon()
@@ -23,9 +25,9 @@ class MethodHalfDivision(NonlinearEquationsSolver):
             iterations[i][0] = i + 1
             iterations[i][1], iterations[i][2] = a, b
             iterations[i][3] = x
-            iterations[i][4] = float(ne.evaluate(equatation, local_dict={'x': a}))
-            iterations[i][5] = float(ne.evaluate(equatation, local_dict={'x': b}))
-            iterations[i][6] = float(ne.evaluate(equatation, local_dict={'x': x}))
+            iterations[i][4] = calculateFunctionValue(a, number_of_equation)
+            iterations[i][5] = calculateFunctionValue(b, number_of_equation)
+            iterations[i][6] = calculateFunctionValue(x, number_of_equation)
             iterations[i][7] = abs(a - b)
             if iterations[i][4] * iterations[i][6] > 0 and iterations[i][5] * iterations[i][6] > 0:
                 raise IncorrectValueException('Невозможно найти корень на данном интервале.')
@@ -37,10 +39,7 @@ class MethodHalfDivision(NonlinearEquationsSolver):
             if iterations[i][7] <= eps:
                 break
         self.printTableForMethodHalfDivision(iterations, count_of_iterations)
-        print(f'\tНайденный корень уравнения:{iterations[count_of_iterations - 1][3]}\n'
-              f'\tЗначение функции в корне:{iterations[count_of_iterations - 1][6]}\n'
-              f'\tЧисло итераций: {count_of_iterations}')
-        return iterations[count_of_iterations - 1][3]
+        return iterations[count_of_iterations - 1][3], iterations[count_of_iterations - 1][6], count_of_iterations
 
     def printTableForMethodHalfDivision(self, table, count_of_iterations):
         print('№ итерации| a | b | x | f(a) | f(b) | f(x) | |a-b| |')
