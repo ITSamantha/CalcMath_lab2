@@ -5,10 +5,11 @@ from Exceptions.IncorrectValueException import IncorrectValueException
 from NonlinearEquations.Methods.MethodEasyIteration import MethodEasyIteration
 from NonlinearEquations.Methods.MethodHalfDivision import MethodHalfDivision
 from NonlinearEquations.Methods.MethodSecant import MethodSecant
-from NonlinearEquations.NonlinearEquationsValidator import NonlinearEquationsValidator
+from NonlinearEquationsValidator import NonlinearEquationsValidator
 from Equations import EQUATIONS
 
 AMOUNT_OF_METHODS = 3
+METHODS=['Метод половинного деления','Метод секущих', 'Метод простой итерации']
 
 
 class Terminal:
@@ -38,7 +39,8 @@ class Terminal:
                 print(f"{i + 1}. {EQUATIONS[i + 1]['FUNCTION']}")
             equation_number = self.enterEquationNumber()
             print('\t\tМетоды решения:')
-            print('1.Метод половинного деления\n2.Метод секущих\n3.Метод простой итерации')
+            for i in range(len(METHODS)):
+                print(f'{i + 1}.{METHODS[i]}')
             method_number = self.enterEquationMethod()
             self.__isFromFile = self.isFile(0)
             if self.__isFromFile:
@@ -52,14 +54,14 @@ class Terminal:
             elif equation_number == 2:
                 plt.plot(x, (3 * x ** 3 - 12 * x ** 2 + 19.2))
             else:
-                plt.plot(x, (x**5+(x+1)**4-x))
+                plt.plot(x, (x ** 5 + (x + 1) ** 4 - x))
             plt.xlabel(r'$x$')
             plt.ylabel(r'$f(x)$')
             plt.title(EQUATIONS[equation_number]['FUNCTION'])
             plt.grid(True)
             if method_number == 1:
                 solver = MethodHalfDivision(epsilon, left_border=a, right_border=b)
-                answer_x, fun_value, count_of_iter  = solver.methodHalfDivision(equation_number)
+                answer_x, fun_value, count_of_iter = solver.methodHalfDivision(equation_number)
             elif method_number == 2:
                 solver = MethodSecant(epsilon, left_border=a, right_border=b)
                 answer_x, fun_value, count_of_iter = solver.methodSecant(equation_number)
@@ -72,8 +74,8 @@ class Terminal:
             print(answer_str)
             self.__isFromFile = self.isFile(1)
             if self.__isFromFile:
-                f = open(input('Введите путь к файлу, в который будет записан результат:'), 'w',encoding='utf-8')
-                f.write(answer_str,)
+                f = open(input('Введите путь к файлу, в который будет записан результат:'), 'w', encoding='utf-8')
+                f.write(answer_str, )
                 f.close()
             plt.scatter(answer_x, 0, color='red', s=40, marker='o')
         except IncorrectValueException as e:

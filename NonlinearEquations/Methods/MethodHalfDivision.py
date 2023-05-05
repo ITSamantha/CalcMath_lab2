@@ -30,7 +30,7 @@ class MethodHalfDivision(NonlinearEquationsSolver):
             iterations[i][6] = calculateFunctionValue(x, number_of_equation)
             iterations[i][7] = abs(a - b)
             if iterations[i][4] * iterations[i][6] > 0 and iterations[i][5] * iterations[i][6] > 0:
-                raise IncorrectValueException('Невозможно найти корень на данном интервале.')
+                raise IncorrectValueException('Невозможно найти корень на данном интервале. Его нет или их несколько.')
             if iterations[i][4] * iterations[i][6] > 0:
                 a = x
             else:
